@@ -7,7 +7,7 @@
 
 namespace eosio {
 
-    void deltadextoken::create(account_name issuer, asset maximum_supply) {
+    void deltadex::create(account_name issuer, asset maximum_supply) {
         require_auth(_self);
 
         auto sym = maximum_supply.symbol;
@@ -27,15 +27,15 @@ namespace eosio {
     }
 
 
-    void deltadextoken::issue(account_name to, asset quantity, string memo) {
+    void deltadex::issue(account_name to, asset quantity, string memo) {
         do_issue(to, quantity, memo, true);
     }
 
-    void deltadextoken::issuefree(account_name to, asset quantity, string memo) {
+    void deltadex::issuefree(account_name to, asset quantity, string memo) {
         do_issue(to, quantity, memo, false);
     }
 
-    void deltadextoken::burn(account_name from, asset quantity, string memo) {
+    void deltadex::burn(account_name from, asset quantity, string memo) {
         auto sym = quantity.symbol;
         eosio_assert(sym.is_valid(), "invalid symbol name");
         eosio_assert(memo.size() <= 256, "memo has more than 256 bytes");
@@ -61,7 +61,7 @@ namespace eosio {
         sub_balance(from, quantity);
     }
 
-    void deltadextoken::signup(account_name owner, asset quantity) {
+    void deltadex::signup(account_name owner, asset quantity) {
         auto sym = quantity.symbol;
         eosio_assert(sym.is_valid(), "invalid symbol name");
 
@@ -90,15 +90,15 @@ namespace eosio {
         add_balance(owner, quantity, owner);
     }
 
-    void deltadextoken::transfer(account_name from, account_name to, asset quantity, string memo) {
+    void deltadex::transfer(account_name from, account_name to, asset quantity, string memo) {
         do_transfer(from, to, quantity, memo, true);
     }
 
-    void deltadextoken::transferfree(account_name from, account_name to, asset quantity, string memo) {
+    void deltadex::transferfree(account_name from, account_name to, asset quantity, string memo) {
         do_transfer(from, to, quantity, memo, false);
     }
 
-    void deltadextoken::do_issue(account_name to, asset quantity, string memo, bool pay_ram = true) {
+    void deltadex::do_issue(account_name to, asset quantity, string memo, bool pay_ram = true) {
         auto sym = quantity.symbol;
         eosio_assert(sym.is_valid(), "invalid symbol name");
         eosio_assert(memo.size() <= 256, "memo has more than 256 bytes");
@@ -131,7 +131,7 @@ namespace eosio {
         }
     }
 
-    void deltadextoken::do_transfer(account_name from, account_name to, asset quantity, string memo, bool pay_ram = true) {
+    void deltadex::do_transfer(account_name from, account_name to, asset quantity, string memo, bool pay_ram = true) {
         eosio_assert(from != to, "cannot transfer to self");
         require_auth(from);
         eosio_assert(is_account(to), "to account does not exist");
@@ -152,14 +152,14 @@ namespace eosio {
         add_balance(to, quantity, from, pay_ram);
     }
 
-    void deltadextoken::sub_balance(account_name owner, asset value) {
+    void deltadex::sub_balance(account_name owner, asset value) {
         accounts from_acnts(_self, owner);
 
         const auto& from = from_acnts.get(value.symbol.name(), "no balance object found");
         eosio_assert(from.balance.amount >= value.amount, "overdrawn balance");
 
         if(from.balance.amount == value.amount) {
-            from_acnts.erase( from );
+            from_acnts.erase(from);
         } else {
             from_acnts.modify(from, owner, [&](auto& a) {
                 a.balance -= value;
@@ -167,7 +167,7 @@ namespace eosio {
         }
     }
 
-    void deltadextoken::add_balance(account_name owner, asset value, account_name ram_payer, bool pay_ram = true) {
+    void deltadex::add_balance(account_name owner, asset value, account_name ram_payer, bool pay_ram = true) {
         accounts to_acnts(_self, owner);
         auto to = to_acnts.find(value.symbol.name());
         if(to == to_acnts.end()) {
@@ -183,4 +183,4 @@ namespace eosio {
     }
 } /// namespace eosio
 
-EOSIO_ABI(eosio::deltadextoken, (create)(issue)(issuefree)(burn)(signup)(transfer)(transferfree))
+EOSIO_ABI(eosio::deltadex, (create)(issue)(issuefree)(burn)(signup)(transfer)(transferfree))
