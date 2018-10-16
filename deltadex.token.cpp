@@ -98,7 +98,7 @@ namespace eosio {
         do_transfer(from, to, quantity, memo, false);
     }
 
-    void deltadex::do_issue(account_name to, asset quantity, string memo, bool pay_ram = true) {
+    void deltadex::do_issue(account_name to, asset quantity, string memo, bool pay_ram) {
         auto sym = quantity.symbol;
         eosio_assert(sym.is_valid(), "invalid symbol name");
         eosio_assert(memo.size() <= 256, "memo has more than 256 bytes");
@@ -131,7 +131,7 @@ namespace eosio {
         }
     }
 
-    void deltadex::do_transfer(account_name from, account_name to, asset quantity, string memo, bool pay_ram = true) {
+    void deltadex::do_transfer(account_name from, account_name to, asset quantity, string memo, bool pay_ram) {
         eosio_assert(from != to, "cannot transfer to self");
         require_auth(from);
         eosio_assert(is_account(to), "to account does not exist");
@@ -167,7 +167,7 @@ namespace eosio {
         }
     }
 
-    void deltadex::add_balance(account_name owner, asset value, account_name ram_payer, bool pay_ram = true) {
+    void deltadex::add_balance(account_name owner, asset value, account_name ram_payer, bool pay_ram) {
         accounts to_acnts(_self, owner);
         auto to = to_acnts.find(value.symbol.name());
         if(to == to_acnts.end()) {
