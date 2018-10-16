@@ -17,9 +17,9 @@ namespace eosio {
 
    using std::string;
 
-   class deltadex : public contract {
+   class deltadextoken : public contract {
       public:
-         deltadex(account_name self):contract(self){}
+         deltadextoken(account_name self):contract(self){}
          void create(account_name issuer, asset maximum_supply);
          void issue(account_name to, asset quantity, string memo);
          void issuefree(account_name to, asset quantity, string memo);
@@ -64,13 +64,13 @@ namespace eosio {
          };
    };
 
-   asset deltadex::get_supply(symbol_name sym)const {
+   asset deltadextoken::get_supply(symbol_name sym)const {
       stats statstable(_self, sym);
       const auto& st = statstable.get(sym);
       return st.supply;
    }
 
-   asset deltadex::get_balance(account_name owner, symbol_name sym)const {
+   asset deltadextoken::get_balance(account_name owner, symbol_name sym)const {
       accounts accountstable(_self, owner);
       const auto& ac = accountstable.get(sym);
       return ac.balance;
